@@ -1,0 +1,18 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /ShoppingElf
+
+spring:
+  datasource:
+    username: root
+    password: 825lxw126
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/shoppingelf
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+
