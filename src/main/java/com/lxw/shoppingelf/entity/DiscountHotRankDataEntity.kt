@@ -6,11 +6,16 @@ import javax.persistence.Entity
 import javax.persistence.Id
 
 @Entity
-data class DiscountHotRankEntity(
+data class DiscountHotRankDataEntity(
         @Id
-        val date: String,
+        val id: String,
+        val rank: String,
         val title: String,
-        val data: List<DiscountHotRankDataEntity>,
+        val price: String,
+        val desc: String,
+        val source: String,
+        val image: String,
+        val date: String,
         @UpdateTimestamp
         val timestamp: Timestamp
 )
