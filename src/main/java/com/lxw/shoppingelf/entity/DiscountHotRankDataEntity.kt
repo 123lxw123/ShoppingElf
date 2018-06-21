@@ -1,6 +1,5 @@
 package com.lxw.shoppingelf.entity
 
-import org.hibernate.annotations.UpdateTimestamp
 import java.sql.Timestamp
 import javax.persistence.Entity
 import javax.persistence.Id
@@ -16,6 +15,5 @@ data class DiscountHotRankDataEntity(
         val source: String,
         val image: String,
         val date: String,
-        @UpdateTimestamp
         val timestamp: Timestamp
 )

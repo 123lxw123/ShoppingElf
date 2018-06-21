@@ -21,7 +21,7 @@ class DiscountHotRankSchedule {
         val hour = dateContent.substring(12, 14)
         val url = BaseURL.DISCOUNT_HOT_RANK.replace("{date}", date)
                 .replace("{hour}", hour)
-        Spider.create(DiscountHotRankProcessor()).thread(1)
+        Spider.create(DiscountHotRankProcessor(dateContent)).thread(1)
                 .addUrl(url)
                 .run()
     }
