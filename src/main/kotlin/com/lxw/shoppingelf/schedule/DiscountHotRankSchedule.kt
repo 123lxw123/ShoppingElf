@@ -3,8 +3,9 @@ package com.lxw.shoppingelf.schedule
 import com.lxw.shoppingelf.base.BaseURL
 import com.lxw.shoppingelf.spider.DiscountHotRankProcessor
 import com.lxw.shoppingelf.util.UtilDate
-import org.springframework.stereotype.Service
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.scheduling.annotation.Scheduled
+import org.springframework.stereotype.Component
 import us.codecraft.webmagic.Spider
 
 
@@ -13,15 +14,20 @@ import us.codecraft.webmagic.Spider
 /**
  * 国内折扣热度排行榜
  */
-@Service
+@Component
 class DiscountHotRankSchedule {
-    @Scheduled(cron = "0 0 * * * *")
-    fun getDiscountHotRank(dateContent: String = UtilDate.getCurrentDate("yyyy/MM/dd HH:mm:ss")) {
+    @Autowired
+    private lateinit var discountHotRankProcessor: DiscountHotRankProcessor
+
+    @Scheduled(cron = "0 58 22 * * ?")
+    fun getDiscountHotRank() {
+        val dateContent = UtilDate.getCurrentDate("yyyy/MM/dd HH:mm:ss")
         val date = dateContent.substring(0, 10)
-        val hour = dateContent.substring(12, 14)
+        val hour = dateContent.substring(11, 13)
         val url = BaseURL.DISCOUNT_HOT_RANK.replace("{date}", date)
                 .replace("{hour}", hour)
-        Spider.create(DiscountHotRankProcessor(dateContent)).thread(1)
+        discountHotRankProcessor.setDate(dateContent)
+        Spider.create(discountHotRankProcessor).thread(1)
                 .addUrl(url)
                 .run()
     }
