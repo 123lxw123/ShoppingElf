@@ -1,21 +1,18 @@
 package com.lxw.shoppingelf.entity
 
-import org.springframework.data.annotation.LastModifiedDate
 import java.util.*
-import javax.persistence.Entity
-import javax.persistence.Id
+import java.io.Serializable
 
-@Entity
 data class DiscountHotRankDataEntity(
-        @Id
-        val id: String = "",
-        val rank: String = "",
-        val title: String = "",
-        val price: String = "",
-        val desc: String = "",
-        val source: String = "",
-        val image: String = "",
-        val date: String = "",
-        @LastModifiedDate
+        val discountHotRankDate: String,
+        val uid: String,
+        val rank: String,
+        val title: String,
+        val price: String,
+        val desc: String,
+        val source: String,
+        val image: String,
+        val date: String,
+        val id: Long = 0,
         val timestamp: Date = Calendar.getInstance().time
-)
+) : Serializable

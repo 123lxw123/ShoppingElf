@@ -4,7 +4,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-object UtilDate {
+object DateUtil {
     fun getCurrentDate(format: String = "yyyy-MM-dd HH:mm:ss"): String {
         val date = Date()
         val simpleDateFormat = SimpleDateFormat(format)

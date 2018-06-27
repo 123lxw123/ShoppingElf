@@ -2,7 +2,7 @@ package com.lxw.shoppingelf.schedule
 
 import com.lxw.shoppingelf.base.BaseURL
 import com.lxw.shoppingelf.spider.DiscountHotRankProcessor
-import com.lxw.shoppingelf.util.UtilDate
+import com.lxw.shoppingelf.util.DateUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
@@ -19,9 +19,9 @@ class DiscountHotRankSchedule {
     @Autowired
     private lateinit var discountHotRankProcessor: DiscountHotRankProcessor
 
-    @Scheduled(cron = "0 58 22 * * ?")
+    @Scheduled(cron = "0 9 23 * * ?")
     fun getDiscountHotRank() {
-        val dateContent = UtilDate.getCurrentDate("yyyy/MM/dd HH:mm:ss")
+        val dateContent = DateUtil.getCurrentDate("yyyy/MM/dd HH:mm:ss")
         val date = dateContent.substring(0, 10)
         val hour = dateContent.substring(11, 13)
         val url = BaseURL.DISCOUNT_HOT_RANK.replace("{date}", date)
@@ -31,5 +31,4 @@ class DiscountHotRankSchedule {
                 .addUrl(url)
                 .run()
     }
-
 }
