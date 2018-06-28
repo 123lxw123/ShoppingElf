@@ -19,7 +19,7 @@ class DiscountHotRankSchedule {
     @Autowired
     private lateinit var discountHotRankProcessor: DiscountHotRankProcessor
 
-    @Scheduled(cron = "0 9 23 * * ?")
+    @Scheduled(cron = "0 55 23 * * ?")
     fun getDiscountHotRank() {
         val dateContent = DateUtil.getCurrentDate("yyyy/MM/dd HH:mm:ss")
         val date = dateContent.substring(0, 10)
