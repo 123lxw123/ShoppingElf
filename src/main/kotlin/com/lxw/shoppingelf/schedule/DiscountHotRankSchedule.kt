@@ -8,9 +8,6 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import us.codecraft.webmagic.Spider
 
-
-
-
 /**
  * 国内折扣热度排行榜
  */
@@ -19,9 +16,9 @@ class DiscountHotRankSchedule {
     @Autowired
     private lateinit var discountHotRankProcessor: DiscountHotRankProcessor
 
-    @Scheduled(cron = "0 55 23 * * ?")
+    @Scheduled(cron = "0 44 23 * * ?")
     fun getDiscountHotRank() {
-        val dateContent = DateUtil.getCurrentDate("yyyy/MM/dd HH:mm:ss")
+        val dateContent = DateUtil.getCurrentDate("yyyy/MM/dd HH:00:00")
         val date = dateContent.substring(0, 10)
         val hour = dateContent.substring(11, 13)
         val url = BaseURL.DISCOUNT_HOT_RANK.replace("{date}", date)

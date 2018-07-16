@@ -27,25 +27,26 @@ class DiscountHotRankProcessor : BaseProcessor(){
         val title = html.css("div.t").get()
                 .replace("<span>", "(")
                 .replace("</span>", ")")
+                .getContentFromHTML()
         val discountHotRankEntity = DiscountHotRankEntity(date, title)
         discountHotRankMapper.insert(discountHotRankEntity)
         val item = html.css("li.item")
-        val uIds = item.css("span.gobuy").regex("tobuy\\('(.*?)'\\)").all()
+        val uids = item.css("span.gobuy").regex("tobuy\\('(.*?)'\\)").all()
         val ranks = item.css("i.ic_top").all().map { it.getContentFromHTML() }
         val titles = item.css("h2").css("a").all().filter { !it.contains("highlight") }.map { it.getContentFromHTML() }
         val prices = item.css("h2").css("a.highlight").all().map { it.getContentFromHTML() }
-        val descs = item.css("div.descripe").all().map { it.getContentFromHTML() }
+        val descriptions = item.css("div.descripe").all().map { it.getContentFromHTML() }
         val sources = item.css("span.mall").all().map { it.getContentFromHTML() }
         val images = item.css("img", "src").all()
         val dates = item.css("span.time").all().map { it.getContentFromHTML() }
-        uIds.forEachIndexed { index, _ ->
+        uids.forEachIndexed { index, _ ->
             val discountHotRankDataEntity = DiscountHotRankDataEntity(
                     date,
-                    uIds[index],
+                    uids[index],
                     ranks[index],
                     titles[index],
                     prices[index],
-                    descs[index],
+                    descriptions[index],
                     sources[index],
                     images[index],
                     dates[index]
