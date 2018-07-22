@@ -40,9 +40,11 @@ class DiscountHotRankProcessor : BaseProcessor(){
         val images = item.css("img", "src").all()
         val dates = item.css("span.time").all().map { it.getContentFromHTML() }
         uids.forEachIndexed { index, _ ->
+            val url = "http://zhekou.manmanbuy.com/wgoto_${uids[index]}.aspx"
             val discountHotRankDataEntity = DiscountHotRankDataEntity(
                     date,
                     uids[index],
+                    url,
                     ranks[index],
                     titles[index],
                     prices[index],

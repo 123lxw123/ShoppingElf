@@ -6,6 +6,7 @@ import java.io.Serializable
 data class DiscountHotRankDataEntity(
         val discountHotRankDate: String,
         val uid: String,
+        val url: String,
         val rank: String,
         val title: String,
         val price: String,
