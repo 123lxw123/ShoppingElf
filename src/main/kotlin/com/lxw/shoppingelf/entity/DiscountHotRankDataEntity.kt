@@ -12,8 +12,9 @@ data class DiscountHotRankDataEntity(
         val price: String,
         val description: String,
         val source: String,
-        val image: String,
+        val image: String?,
         val date: String,
         val id: Long = 0,
-        val time: Date = Calendar.getInstance().time
+        val createTime: Date =  Calendar.getInstance().time,
+        val updateTime: Date =  Calendar.getInstance().time
 ) : Serializable

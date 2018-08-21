@@ -5,6 +5,6 @@ import org.apache.ibatis.annotations.Insert
 
 interface DiscountHotRankMapper {
 
-    @Insert("insert into discount_hot_rank(date, title, time) values (#{date}, #{title}, #{time})")
+    @Insert("insert into discount_hot_rank(date, title, time) values (#{date}, #{title})")
     fun insert(instance : DiscountHotRankEntity): Int
 }
