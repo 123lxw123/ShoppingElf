@@ -18,6 +18,7 @@ class DiscountHotRankProcessor : BaseProcessor(){
     @Autowired
     private lateinit var discountHotRankDataMapper: DiscountHotRankDataMapper
     private lateinit var date: String
+
     fun setDate(date: String) {
         this.date = date
     }
@@ -43,6 +44,7 @@ class DiscountHotRankProcessor : BaseProcessor(){
             val url = "http://zhekou.manmanbuy.com/wgoto_${uids[index]}.aspx"
             val discountHotRankDataEntity = DiscountHotRankDataEntity(
                     date,
+                    discountHotRankEntity.id,
                     uids[index],
                     url,
                     ranks[index],

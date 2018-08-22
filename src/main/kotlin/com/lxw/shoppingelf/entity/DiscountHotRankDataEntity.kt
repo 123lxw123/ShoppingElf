@@ -5,6 +5,7 @@ import java.io.Serializable
 
 data class DiscountHotRankDataEntity(
         val discountHotRankDate: String,
+        val discountHotId: Int,
         val uid: String,
         val url: String,
         val rank: String,
@@ -14,7 +15,9 @@ data class DiscountHotRankDataEntity(
         val source: String,
         val image: String?,
         val date: String,
-        val id: Long = 0,
+
+        val category: String,
+        val id: Int = 0,
         val createTime: Date =  Calendar.getInstance().time,
         val updateTime: Date =  Calendar.getInstance().time
 ) : Serializable
