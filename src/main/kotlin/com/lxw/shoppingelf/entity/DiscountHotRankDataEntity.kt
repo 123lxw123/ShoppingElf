@@ -16,7 +16,14 @@ data class DiscountHotRankDataEntity(
         val image: String?,
         val date: String,
 
-        val category: String,
+        var category: String?,
+        var introducer: String?,
+        var label: String?,
+        var shareCount: Int = 0,
+        var collectCount: Int = 0,
+        var likeCount: Int = 0,
+        var history: DiscountHotRankDataHistoryEntity?,
+
         val id: Int = 0,
         val createTime: Date =  Calendar.getInstance().time,
         val updateTime: Date =  Calendar.getInstance().time
