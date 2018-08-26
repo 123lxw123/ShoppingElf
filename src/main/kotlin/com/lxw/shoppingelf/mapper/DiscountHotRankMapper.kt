@@ -17,6 +17,6 @@ interface DiscountHotRankMapper {
     fun insert(instance : DiscountHotRankEntity): Int
 
     @Options(useGeneratedKeys=true, keyProperty="id")
-    @Update("UPDATE discount_hot_rank_data SET discount_hot_rank_date=#{discount_hot_rank_date}, uid=#{uid}, url=#{url}, rank=#{rank}, title=#{title} ,price=#{price}, description=#{description}, source=#{source}, image=#{image}, date=#{date}")
+    @Update("UPDATE discount_hot_rank_data SET discount_hot_rank_date=#{discountHotRankDate}, uid=#{uid}, url=#{url}, rank=#{rank}, title=#{title} ,price=#{price}, description=#{description}, source=#{source}, image=#{image}, date=#{date} WHERE id=#{id}")
     fun update(instance : DiscountHotRankDataEntity): Int
 }

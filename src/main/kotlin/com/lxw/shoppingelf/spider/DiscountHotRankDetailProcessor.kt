@@ -1,10 +1,7 @@
 package com.lxw.shoppingelf.spider
 
 import com.lxw.shoppingelf.base.BaseProcessor
-import com.lxw.shoppingelf.entity.DiscountHotRankDataEntity
-import com.lxw.shoppingelf.entity.DiscountHotRankEntity
 import com.lxw.shoppingelf.mapper.DiscountHotRankDataMapper
-import com.lxw.shoppingelf.mapper.DiscountHotRankMapper
 import com.lxw.shoppingelf.util.getContentFromHTML
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -15,18 +12,14 @@ class DiscountHotRankDetailProcessor : BaseProcessor() {
 
     @Autowired
     private lateinit var discountHotRankDataMapper: DiscountHotRankDataMapper
-    private lateinit var discountHotId: String
-
-    fun setDiscountHotId(discountHotId: String) {
-        this.discountHotId = discountHotId
-    }
 
     override fun process(page: Page) {
-        val discountHotRankDataEntity = discountHotRankDataMapper.select(discountHotId)
+        val url = page.url.toString()
+        val discountHotRankDataEntity = discountHotRankDataMapper.selectByUrl(url)
         val html = page.html
-        val category = html.css("div.cu-breadcrumbs").css("a").all()[1].getContentFromHTML()
+        val category = html.css("div.cu-breadcrumbs").css("a").all()[2].getContentFromHTML()
         val infs = html.css("div.inf").css("p").all()
-        val introducer = infs[0].getContentFromHTML()
+        val introducer = infs[0].getContentFromHTML().replace("推荐人：", "")
         var label = infs[2].replace("</a>", ",</a>")
                 .getContentFromHTML()
                 .replace("标签：", "")
@@ -52,9 +45,6 @@ class DiscountHotRankDetailProcessor : BaseProcessor() {
         discountHotRankDataEntity.shareCount = shareCount
         discountHotRankDataEntity.collectCount = collectCount
         discountHotRankDataEntity.likeCount = likeCount
-        discountHotRankDataMapper.insert(discountHotRankDataEntity)
+        discountHotRankDataMapper.update(discountHotRankDataEntity)
     }
-
-}
-
 }

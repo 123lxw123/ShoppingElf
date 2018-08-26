@@ -1,6 +1,7 @@
 package com.lxw.shoppingelf.spider
 
 import com.lxw.shoppingelf.base.BaseProcessor
+import com.lxw.shoppingelf.base.BaseURL
 import com.lxw.shoppingelf.entity.DiscountHotRankDataEntity
 import com.lxw.shoppingelf.entity.DiscountHotRankEntity
 import com.lxw.shoppingelf.mapper.DiscountHotRankDataMapper
@@ -9,6 +10,7 @@ import com.lxw.shoppingelf.util.getContentFromHTML
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import us.codecraft.webmagic.Page
+import us.codecraft.webmagic.Spider
 
 @Component
 class DiscountHotRankProcessor : BaseProcessor(){
@@ -17,6 +19,11 @@ class DiscountHotRankProcessor : BaseProcessor(){
     private lateinit var discountHotRankMapper: DiscountHotRankMapper
     @Autowired
     private lateinit var discountHotRankDataMapper: DiscountHotRankDataMapper
+    @Autowired
+    private lateinit var discountHotRankDetailProcessor: DiscountHotRankDetailProcessor
+    @Autowired
+    private lateinit var discountHotRankHistoryProcessor: HistoryProcessor
+
     private lateinit var date: String
 
     fun setDate(date: String) {
@@ -25,6 +32,8 @@ class DiscountHotRankProcessor : BaseProcessor(){
 
     override fun process(page: Page) {
         val html = page.html
+        val detailUrls = mutableListOf<String>()
+        val historyUrls = mutableListOf<String>()
         val title = html.css("div.t").get()
                 .replace("<span>", "(")
                 .replace("</span>", ")")
@@ -41,12 +50,14 @@ class DiscountHotRankProcessor : BaseProcessor(){
         val images = item.css("img", "src").all()
         val dates = item.css("span.time").all().map { it.getContentFromHTML() }
         uids.forEachIndexed { index, _ ->
-            val url = "http://zhekou.manmanbuy.com/wgoto_${uids[index]}.aspx"
+            val detailUrl = BaseURL.DISCOUNT_HOT_RANK_DETAIL.replace("{uid}", uids[index])
+            val historyUrl = BaseURL.DISCOUNT_HOT_RANK_HISTORY.replace("{uid}", uids[index])
+            val throughUrl = BaseURL.DISCOUNT_HOT_RANK_THROUGH.replace("{uid}", uids[index])
             val discountHotRankDataEntity = DiscountHotRankDataEntity(
                     date,
-                    discountHotRankEntity.id,
                     uids[index],
-                    url,
+                    detailUrl,
+                    throughUrl,
                     ranks[index],
                     titles[index],
                     prices[index],
@@ -56,8 +67,15 @@ class DiscountHotRankProcessor : BaseProcessor(){
                     dates[index]
             )
             discountHotRankDataMapper.insert(discountHotRankDataEntity)
+            detailUrls.add(detailUrl)
+            historyUrls.add(historyUrl)
         }
-
+        Spider.create(discountHotRankDetailProcessor).thread(3)
+                .addUrl(*detailUrls.toTypedArray())
+                .run()
+        Spider.create(discountHotRankHistoryProcessor).thread(3)
+                .addUrl(*historyUrls.toTypedArray())
+                .run()
     }
 
 }

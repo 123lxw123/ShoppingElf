@@ -1,12 +1,12 @@
 package com.lxw.shoppingelf.entity
 
-import java.util.*
 import java.io.Serializable
+import java.sql.Timestamp
 
 data class DiscountHotRankEntity(
         val date: String,
         val title: String,
-        val id: Int = 0,
-        val createTime: Date = Calendar.getInstance().time,
-        val updateTime: Date = Calendar.getInstance().time
-) : Serializable
+        val id: Long = 0,
+        val createTime: Timestamp? = null,
+        val updateTime: Timestamp? = null
+        ) : Serializable
