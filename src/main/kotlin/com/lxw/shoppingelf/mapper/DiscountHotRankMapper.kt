@@ -9,8 +9,13 @@ import org.apache.ibatis.annotations.Update
 
 interface DiscountHotRankMapper {
 
-    @Select("SELECT * FROM discount_hot_rank WHERE id=#{id}")
-    fun select(id : String): DiscountHotRankEntity
+    @Select(
+            "SELECT * FROM discount_hot_rank " +
+            "<if test=\"id != null\"> WHERE id<#{id} </if> " +
+            "ORDER BY id DESC " +
+            "LIMIT 1"
+    )
+    fun selectById(id : Long?): DiscountHotRankEntity?
 
     @Options(useGeneratedKeys=true, keyProperty="id")
     @Insert("INSERT INTO discount_hot_rank(date, title) values (#{date}, #{title})")

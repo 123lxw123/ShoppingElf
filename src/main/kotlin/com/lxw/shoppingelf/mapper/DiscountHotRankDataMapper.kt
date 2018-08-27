@@ -12,7 +12,7 @@ interface DiscountHotRankDataMapper {
     fun selectByUrl(url : String): DiscountHotRankDataEntity
 
     @Select("SELECT * FROM discount_hot_rank_data WHERE discount_hot_rank_date=#{discountHotRankDate}")
-    fun selectByDiscountHotRankDate(discountHotRankDate : String): DiscountHotRankDataEntity
+    fun selectByDiscountHotRankDate(discountHotRankDate : String): List<DiscountHotRankDataEntity>?
 
     @Options(useGeneratedKeys=true, keyProperty="id")
     @Insert("INSERT INTO discount_hot_rank_data(discount_hot_rank_date, uid, url, through_url, rank, title, price, description, source, image, date, category, introducer, label, share_count, collect_count, like_count) values (#{discountHotRankDate}, #{uid}, #{url}, #{throughUrl}, #{rank}, #{title}, #{price}, #{description}, #{source}, #{image}, #{date}, #{category}, #{introducer}, #{label}, #{shareCount}, #{collectCount}, #{likeCount})")
