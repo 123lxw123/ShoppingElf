@@ -2,20 +2,18 @@ package com.lxw.shoppingelf.mapper
 
 import com.lxw.shoppingelf.entity.DiscountHotRankDataEntity
 import com.lxw.shoppingelf.entity.DiscountHotRankEntity
-import org.apache.ibatis.annotations.Insert
-import org.apache.ibatis.annotations.Options
-import org.apache.ibatis.annotations.Select
-import org.apache.ibatis.annotations.Update
+import org.apache.ibatis.annotations.*
 
 interface DiscountHotRankMapper {
 
-    @Select(
+    @Select("<script> " +
             "SELECT * FROM discount_hot_rank " +
-            "<if test=\"id != null\"> WHERE id<#{id} </if> " +
+            "<if test=\"id != null\"> WHERE id &lt; #{id} </if> " +
             "ORDER BY id DESC " +
-            "LIMIT 1"
+            "LIMIT 1 " +
+            " </script> "
     )
-    fun selectById(id : Long?): DiscountHotRankEntity?
+    fun selectById(@Param("id")id : Long?): DiscountHotRankEntity?
 
     @Options(useGeneratedKeys=true, keyProperty="id")
     @Insert("INSERT INTO discount_hot_rank(date, title) values (#{date}, #{title})")

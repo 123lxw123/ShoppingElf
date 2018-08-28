@@ -5,7 +5,7 @@ import java.sql.Timestamp
 
 data class HistoryEntity(
         var url: String,
-        val bjid: Long? = null,
+        val bjid: Int? = null,
         val changPriceRemark: String,
         val changePriceCount: Int,
         val currentPrice: Double, // 2399
