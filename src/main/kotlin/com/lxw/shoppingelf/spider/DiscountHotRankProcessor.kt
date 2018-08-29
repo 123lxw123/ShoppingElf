@@ -9,11 +9,12 @@ import com.lxw.shoppingelf.mapper.DiscountHotRankMapper
 import com.lxw.shoppingelf.util.getContentFromHTML
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 import us.codecraft.webmagic.Page
 import us.codecraft.webmagic.Spider
 
 @Component
-class DiscountHotRankProcessor : BaseProcessor(){
+open class DiscountHotRankProcessor : BaseProcessor(){
 
     @Autowired
     private lateinit var discountHotRankMapper: DiscountHotRankMapper
@@ -30,6 +31,7 @@ class DiscountHotRankProcessor : BaseProcessor(){
         this.date = date
     }
 
+    @Transactional
     override fun process(page: Page) {
         val html = page.html
         val detailUrls = mutableListOf<String>()

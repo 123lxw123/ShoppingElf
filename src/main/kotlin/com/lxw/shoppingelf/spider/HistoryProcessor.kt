@@ -17,9 +17,11 @@ class HistoryProcessor : BaseProcessor() {
 
     override fun process(page: Page) {
         var url = page.url.toString()
-        if (url.contains("&w=310")) {
+        if (url.endsWith("&w=310")) {
             val uid = page.url.toString().split("&zkid=")[1].replace("&w=310", "")
             url = BaseURL.DISCOUNT_HOT_RANK_DETAIL.replace("{uid}", uid)
+        } else if (url.contains("&w=951")) {
+            url = page.url.toString().split("&url=")[1].replace("&w=951", "")
         }
         val historyEntity = GsonUtil.json2Bean(page.rawText, HistoryEntity::class.java)
         historyEntity?.url = url

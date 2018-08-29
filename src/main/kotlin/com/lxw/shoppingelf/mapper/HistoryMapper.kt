@@ -1,10 +1,7 @@
 package com.lxw.shoppingelf.mapper
 
 import com.lxw.shoppingelf.entity.HistoryEntity
-import org.apache.ibatis.annotations.Insert
-import org.apache.ibatis.annotations.Options
-import org.apache.ibatis.annotations.Select
-import org.apache.ibatis.annotations.Update
+import org.apache.ibatis.annotations.*
 
 interface HistoryMapper {
 
@@ -17,4 +14,7 @@ interface HistoryMapper {
 
     @Update("UPDATE history SET url=#{url}, bjid=#{bjid}, chang_price_remark=#{changPriceRemark}, change_price_count=#{changePriceCount}, current_price=#{currentPrice}, date_price=#{datePrice} ,from_type=#{fromType}, lower_date=#{lowerDate}, lower_price=#{lowerPrice}, runtime=#{runtime}, site_id=#{siteId}, site_name=#{siteName}, sp_name=#{spName}, sp_pic=#{spPic}, sp_url=#{spUrl}, spbh=#{spbh}, zou_shi=#{zouShi}, zou_shi_test=#{zouShi_test} WHERE id=#{id}")
     fun update(instance : HistoryEntity): Int
+
+    @Delete("DELETE FROM history WHERE url=#{url}")
+    fun delete(url : String): Int
 }
