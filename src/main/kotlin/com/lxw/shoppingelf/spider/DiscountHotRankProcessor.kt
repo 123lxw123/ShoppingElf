@@ -9,7 +9,6 @@ import com.lxw.shoppingelf.mapper.DiscountHotRankMapper
 import com.lxw.shoppingelf.util.getContentFromHTML
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
-import org.springframework.transaction.annotation.Transactional
 import us.codecraft.webmagic.Page
 import us.codecraft.webmagic.Spider
 
@@ -31,7 +30,6 @@ open class DiscountHotRankProcessor : BaseProcessor(){
         this.date = date
     }
 
-    @Transactional
     override fun process(page: Page) {
         val html = page.html
         val detailUrls = mutableListOf<String>()
@@ -41,7 +39,12 @@ open class DiscountHotRankProcessor : BaseProcessor(){
                 .replace("</span>", ")")
                 .getContentFromHTML()
         val discountHotRankEntity = DiscountHotRankEntity(date, title)
-        discountHotRankMapper.insert(discountHotRankEntity)
+        try{
+            discountHotRankMapper.insert(discountHotRankEntity)
+        } catch (e : Exception) {
+            e.printStackTrace()
+            discountHotRankMapper.update(discountHotRankEntity)
+        }
         val item = html.css("li.item")
         val uids = item.css("span.gobuy").regex("tobuy\\('(.*?)'\\)").all()
         val ranks = item.css("i.ic_top").all().map { it.getContentFromHTML() }

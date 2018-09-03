@@ -25,7 +25,15 @@ class HistoryProcessor : BaseProcessor() {
         }
         val historyEntity = GsonUtil.json2Bean(page.rawText, HistoryEntity::class.java)
         historyEntity?.url = url
-        if (historyEntity != null) historyMapper.insert(historyEntity)
+        if (historyEntity != null) {
+            try {
+                historyMapper.insert(historyEntity)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                historyMapper.update(historyEntity)
+            }
+
+        }
     }
 
 }
