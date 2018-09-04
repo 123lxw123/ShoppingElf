@@ -32,6 +32,7 @@ open class PreferenceProcessor : BaseProcessor() {
                     preferenceMapper.insert(it)
                 } catch (e: Exception) {
                     preferenceMapper.update(it)
+                    e.printStackTrace()
                 }
             }
         }

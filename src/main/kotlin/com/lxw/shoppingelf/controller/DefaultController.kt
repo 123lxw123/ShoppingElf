@@ -2,6 +2,7 @@ package com.lxw.shoppingelf.controller
 
 import com.lxw.shoppingelf.base.BaseResponse
 import com.lxw.shoppingelf.base.BaseURL
+import com.lxw.shoppingelf.config.Constants
 import com.lxw.shoppingelf.config.Constants.CommonResponse.NoData
 import com.lxw.shoppingelf.config.Constants.CommonResponse.NoMoreData
 import com.lxw.shoppingelf.config.Constants.CommonResponse.ParamError
@@ -42,12 +43,13 @@ class DefaultController {
     private lateinit var preferenceProcessor: PreferenceProcessor
 
     @GetMapping(value = ["/discountHotRank/list/"])
-    fun getDiscountHotRankList(@RequestParam("id") id: Long?): String {
-        if (id != null && id <= 0) {
-            val response = BaseResponse(null, ParamError.code, ParamError.message + " id 不能小于等于 0")
+    fun getDiscountHotRankList(@RequestParam("id") id: Long?, @RequestParam("orderType") orderType: String?): String {
+        if (id != null && (id <= 0 || orderType.isNullOrBlank())) {
+            val message =  if (id <= 0) " id 不能小于等于 0" else " orderType 不能为空"
+            val response = BaseResponse(null, ParamError.code, ParamError.message + message)
             return GsonUtil.bean2json(response)
         }
-        val discountHotRankEntity = discountHotRankMapper.selectById(id)
+        val discountHotRankEntity = discountHotRankMapper.selectById(id, orderType ?: Constants.ORDER_TYPE_DESC)
         if (discountHotRankEntity == null) {
             val response = BaseResponse(null, NoMoreData.code, NoMoreData.message)
             return GsonUtil.bean2json(response)

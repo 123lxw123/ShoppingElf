@@ -42,8 +42,9 @@ open class DiscountHotRankProcessor : BaseProcessor(){
         try{
             discountHotRankMapper.insert(discountHotRankEntity)
         } catch (e : Exception) {
+            val oldDiscountHotRankEntity = discountHotRankMapper.selectByTitle(title)
+            date = oldDiscountHotRankEntity.date
             e.printStackTrace()
-            discountHotRankMapper.update(discountHotRankEntity)
         }
         val item = html.css("li.item")
         val uids = item.css("span.gobuy").regex("tobuy\\('(.*?)'\\)").all()
@@ -71,8 +72,14 @@ open class DiscountHotRankProcessor : BaseProcessor(){
                     images[index],
                     dates[index]
             )
-            discountHotRankDataMapper.insert(discountHotRankDataEntity)
-            detailUrls.add(detailUrl)
+            try {
+                discountHotRankDataMapper.insert(discountHotRankDataEntity)
+            } catch (e: Exception) {
+                discountHotRankDataMapper.update(discountHotRankDataEntity)
+                e.printStackTrace()
+            }
+
+            detailUrls.add(detailUrl  + "?date=${date.replace(" ", "$$$")}")
             historyUrls.add(historyUrl)
         }
         Spider.create(discountHotRankDetailProcessor).thread(3)

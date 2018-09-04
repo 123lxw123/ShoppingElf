@@ -29,8 +29,8 @@ class HistoryProcessor : BaseProcessor() {
             try {
                 historyMapper.insert(historyEntity)
             } catch (e: Exception) {
-                e.printStackTrace()
                 historyMapper.update(historyEntity)
+                e.printStackTrace()
             }
 
         }

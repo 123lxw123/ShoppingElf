@@ -12,7 +12,7 @@ interface PreferenceMapper {
     @Insert("INSERT INTO preference(url, spname, spprice, dt, infoid, infotype, sppic) values (#{url}, #{spname}, #{spprice}, #{dt}, #{infoid}, #{infotype}, #{sppic})")
     fun insert(instance : PreferenceEntity): Int
 
-    @Update("UPDATE preference SET url=#{url}, spname=#{spname}, spprice=#{spprice}, dt=#{dt}, infoid=#{infoid}, infotype=#{infotype} ,sppic=#{sppic}")
+    @Update("UPDATE preference SET url=#{url}, spname=#{spname}, spprice=#{spprice}, dt=#{dt}, infoid=#{infoid}, infotype=#{infotype} ,sppic=#{sppic} WHERE url=#{url}")
     fun update(instance : PreferenceEntity): Int
 
     @Delete("DELETE FROM preference WHERE url=#{url}")

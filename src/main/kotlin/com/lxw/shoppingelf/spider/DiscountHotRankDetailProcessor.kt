@@ -14,8 +14,10 @@ class DiscountHotRankDetailProcessor : BaseProcessor() {
     private lateinit var discountHotRankDataMapper: DiscountHotRankDataMapper
 
     override fun process(page: Page) {
-        val url = page.url.toString()
-        val discountHotRankDataEntity = discountHotRankDataMapper.selectByUrl(url)
+        val paths = page.url.toString().split("?date=")
+        val url = paths[0]
+        val date = paths[1].replace("$$$", " ")
+        val discountHotRankDataEntity = discountHotRankDataMapper.selectOne(url, date)
         val html = page.html
         val category = html.css("div.cu-breadcrumbs").css("a").all()[2].getContentFromHTML()
         val infs = html.css("div.inf").css("p").all()
