@@ -18,9 +18,10 @@ buildscript {
 }
 
 apply plugin: 'war'
+apply plugin: 'java'
 apply plugin: 'kotlin'
 apply plugin: 'kotlin-spring'
-apply plugin: 'eclipse'
+apply plugin: 'idea'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
@@ -43,6 +44,10 @@ repositories {
     mavenCentral()
 }
 
+configurations {
+    compile.exclude(group: 'ch.qos.logback')
+}
+
 dependencies {
     compile "com.alibaba:druid-spring-boot-starter:${druidVersion}"
     compile('mysql:mysql-connector-java')
@@ -50,7 +55,6 @@ dependencies {
     compile("us.codecraft:webmagic-core:${webmagicVersion}")
     compile("us.codecraft:webmagic-extension:${webmagicVersion}")
 
-    compile('org.springframework.boot:spring-data-commons')
     compile('org.springframework.boot:spring-boot-starter')
     compile('org.springframework.boot:spring-boot-starter-web')
     compile('org.springframework.boot:spring-boot-starter-aop')

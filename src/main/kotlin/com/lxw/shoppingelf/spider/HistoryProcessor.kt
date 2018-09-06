@@ -8,6 +8,7 @@ import com.lxw.shoppingelf.util.GsonUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import us.codecraft.webmagic.Page
+import us.codecraft.webmagic.Site
 
 @Component
 class HistoryProcessor : BaseProcessor() {
