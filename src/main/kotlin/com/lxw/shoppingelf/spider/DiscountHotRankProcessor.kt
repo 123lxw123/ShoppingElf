@@ -13,7 +13,7 @@ import us.codecraft.webmagic.Page
 import us.codecraft.webmagic.Spider
 
 @Component
-open class DiscountHotRankProcessor : BaseProcessor(){
+class DiscountHotRankProcessor : BaseProcessor(){
 
     @Autowired
     private lateinit var discountHotRankMapper: DiscountHotRankMapper

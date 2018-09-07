@@ -23,7 +23,9 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import us.codecraft.webmagic.Spider
+import java.util.*
 import java.util.concurrent.Callable
+import kotlin.concurrent.timerTask
 
 @RestController
 class DefaultController {
@@ -75,14 +77,19 @@ class DefaultController {
             }
             val historyUrl = BaseURL.SEARCH_URL_HISTORY.replace("{url}", url!!)
             val preferenceUrl = BaseURL.SEARCH_URL_PREFERENCE.replace("{url}", url)
-            historyMapper.delete(url)
-            preferenceMapper.delete(url)
-            Spider.create(historyProcessor).thread(1)
-                    .addUrl(historyUrl)
-                    .run()
-            Spider.create(preferenceProcessor).thread(1)
-                    .addUrl(preferenceUrl)
-                    .run()
+            val timer = Timer()
+            timer.schedule(timerTask {
+                try {
+                    Spider.create(historyProcessor).thread(1)
+                            .addUrl(historyUrl)
+                            .run()
+                    Spider.create(preferenceProcessor).thread(1)
+                            .addUrl(preferenceUrl)
+                            .run()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }, 0)
             var totalTime = 0
             var history: HistoryEntity? = null
             var preferences: List<PreferenceEntity>? = null
@@ -91,11 +98,13 @@ class DefaultController {
                 history = historyMapper.selectByUrl(url)
                 preferences = preferenceMapper.selectByUrl(url)
                 if (history != null && preferences != null && preferences.isNotEmpty()) {
+                    timer.cancel()
                     val response = BaseResponse(SearchUrlModel(history, preferences))
                     return@Callable GsonUtil.bean2json(response)
                 }
                 Thread.sleep(1000)
             }
+            timer.cancel()
             return@Callable if (history != null) {
                 val response = BaseResponse(SearchUrlModel(history, preferences))
                 GsonUtil.bean2json(response)

@@ -4,7 +4,7 @@ import com.lxw.shoppingelf.base.BaseCommonResponse
 
 object Constants {
 
-    const val SEARCH_URL_TIMEOUT = 8000 // 搜索 url 超时时间
+    const val SEARCH_URL_TIMEOUT = 15000 // 搜索 url 超时时间
     const val ORDER_TYPE_ASC = "ASC" // 正序
     const val ORDER_TYPE_DESC = "DESC" // 倒序
 

@@ -10,7 +10,7 @@ import us.codecraft.webmagic.Page
 import us.codecraft.webmagic.Site
 
 @Component
-open class PreferenceProcessor : BaseProcessor() {
+class PreferenceProcessor : BaseProcessor() {
 
     @Autowired
     private lateinit var preferenceMapper: PreferenceMapper
