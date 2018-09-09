@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import us.codecraft.webmagic.Spider
+import java.io.UnsupportedEncodingException
 import java.util.*
 import java.util.concurrent.Callable
 import kotlin.concurrent.timerTask
