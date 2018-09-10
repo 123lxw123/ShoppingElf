@@ -18,12 +18,13 @@ import com.lxw.shoppingelf.response.SearchUrlModel
 import com.lxw.shoppingelf.spider.HistoryProcessor
 import com.lxw.shoppingelf.spider.PreferenceProcessor
 import com.lxw.shoppingelf.util.GsonUtil
+import com.lxw.shoppingelf.util.TokenUtil
+import org.apache.commons.logging.Log
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import us.codecraft.webmagic.Spider
-import java.io.UnsupportedEncodingException
 import java.util.*
 import java.util.concurrent.Callable
 import kotlin.concurrent.timerTask
@@ -76,6 +77,7 @@ class DefaultController {
                 val response = BaseResponse(null, ParamError.code, ParamError.message + " url 不能为空")
                 return@Callable GsonUtil.bean2json(response)
             }
+            System.out.print(TokenUtil.getHistoryToken(url!!))
             val historyUrl = BaseURL.SEARCH_URL_HISTORY.replace("{url}", url!!)
             val preferenceUrl = BaseURL.SEARCH_URL_PREFERENCE.replace("{url}", url)
             val timer = Timer()
@@ -98,7 +100,7 @@ class DefaultController {
                 totalTime += 1000
                 history = historyMapper.selectByUrl(url)
                 preferences = preferenceMapper.selectByUrl(url)
-                if (history != null && preferences != null && preferences.isNotEmpty()) {
+                if (history != null && preferences != null) {
                     timer.cancel()
                     val response = BaseResponse(SearchUrlModel(history, preferences))
                     return@Callable GsonUtil.bean2json(response)
