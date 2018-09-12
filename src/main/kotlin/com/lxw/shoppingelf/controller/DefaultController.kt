@@ -19,7 +19,6 @@ import com.lxw.shoppingelf.spider.HistoryProcessor
 import com.lxw.shoppingelf.spider.PreferenceProcessor
 import com.lxw.shoppingelf.util.GsonUtil
 import com.lxw.shoppingelf.util.TokenUtil
-import org.apache.commons.logging.Log
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -77,8 +76,7 @@ class DefaultController {
                 val response = BaseResponse(null, ParamError.code, ParamError.message + " url 不能为空")
                 return@Callable GsonUtil.bean2json(response)
             }
-            System.out.print(TokenUtil.getHistoryToken(url!!))
-            val historyUrl = BaseURL.SEARCH_URL_HISTORY.replace("{url}", url!!)
+            val historyUrl = BaseURL.SEARCH_URL_HISTORY.replace("{token}", TokenUtil.getHistoryToken(url!!)).replace("{url}", url)
             val preferenceUrl = BaseURL.SEARCH_URL_PREFERENCE.replace("{url}", url)
             val timer = Timer()
             timer.schedule(timerTask {
@@ -100,7 +98,7 @@ class DefaultController {
                 totalTime += 1000
                 history = historyMapper.selectByUrl(url)
                 preferences = preferenceMapper.selectByUrl(url)
-                if (history != null && preferences != null) {
+                if (history != null && preferences != null && preferences.isNotEmpty()) {
                     timer.cancel()
                     val response = BaseResponse(SearchUrlModel(history, preferences))
                     return@Callable GsonUtil.bean2json(response)
