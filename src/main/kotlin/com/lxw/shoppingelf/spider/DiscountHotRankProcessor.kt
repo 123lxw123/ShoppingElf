@@ -34,60 +34,67 @@ class DiscountHotRankProcessor : BaseProcessor(){
         val html = page.html
         val detailUrls = mutableListOf<String>()
         val historyUrls = mutableListOf<String>()
-        val title = html.css("div.t").get()
+        var title = html.css("div.t").get()
                 .replace("<span>", "(")
                 .replace("</span>", ")")
                 .getContentFromHTML()
-        val discountHotRankEntity = DiscountHotRankEntity(date, title)
-        try{
-            discountHotRankMapper.insert(discountHotRankEntity)
-        } catch (e : Exception) {
-            val oldDiscountHotRankEntity = discountHotRankMapper.selectByTitle(title)
-            date = oldDiscountHotRankEntity.date
+        try {
+            if (title.subSequence(10, 12) == date.subSequence(11, 13)) {
+                title = title.split("(")[0] + "(" + date.subSequence(0, 10) + " " + title.split("(")[1]
+                val discountHotRankEntity = DiscountHotRankEntity(date, title)
+                try{
+                    discountHotRankMapper.insert(discountHotRankEntity)
+                } catch (e : Exception) {
+                    val oldDiscountHotRankEntity = discountHotRankMapper.selectByTitle(title)
+                    date = oldDiscountHotRankEntity.date
+                    e.printStackTrace()
+                }
+                val item = html.css("li.item")
+                val uids = item.css("span.gobuy").regex("tobuy\\('(.*?)'\\)").all()
+                val ranks = item.css("i.ic_top").all().map { it.getContentFromHTML() }
+                val titles = item.css("h2").css("a").all().filter { !it.contains("highlight") }.map { it.getContentFromHTML() }
+                val prices = item.css("h2").css("a.highlight").all().map { it.getContentFromHTML() }
+                val descriptions = item.css("div.descripe").all().map { it.getContentFromHTML() }
+                val sources = item.css("span.mall").all().map { it.getContentFromHTML() }
+                val images = item.css("img", "src").all()
+                val dates = item.css("span.time").all().map { it.getContentFromHTML() }
+                uids.forEachIndexed { index, _ ->
+                    val detailUrl = BaseURL.DISCOUNT_HOT_RANK_DETAIL.replace("{uid}", uids[index])
+                    val historyUrl = BaseURL.DISCOUNT_HOT_RANK_HISTORY.replace("{uid}", uids[index])
+                    val throughUrl = BaseURL.DISCOUNT_HOT_RANK_THROUGH.replace("{uid}", uids[index])
+                    val discountHotRankDataEntity = DiscountHotRankDataEntity(
+                            date,
+                            uids[index],
+                            detailUrl,
+                            throughUrl,
+                            ranks[index],
+                            titles[index],
+                            prices[index],
+                            descriptions[index],
+                            sources[index],
+                            images[index],
+                            dates[index]
+                    )
+                    try {
+                        discountHotRankDataMapper.insert(discountHotRankDataEntity)
+                    } catch (e: Exception) {
+                        discountHotRankDataMapper.update(discountHotRankDataEntity)
+                        e.printStackTrace()
+                    }
+
+                    detailUrls.add(detailUrl  + "?date=${date.replace(" ", "$$$")}")
+                    historyUrls.add(historyUrl)
+                }
+                Spider.create(discountHotRankDetailProcessor).thread(3)
+                        .addUrl(*detailUrls.toTypedArray())
+                        .run()
+                Spider.create(discountHotRankHistoryProcessor).thread(3)
+                        .addUrl(*historyUrls.toTypedArray())
+                        .run()
+            }
+        } catch (e: Exception) {
             e.printStackTrace()
         }
-        val item = html.css("li.item")
-        val uids = item.css("span.gobuy").regex("tobuy\\('(.*?)'\\)").all()
-        val ranks = item.css("i.ic_top").all().map { it.getContentFromHTML() }
-        val titles = item.css("h2").css("a").all().filter { !it.contains("highlight") }.map { it.getContentFromHTML() }
-        val prices = item.css("h2").css("a.highlight").all().map { it.getContentFromHTML() }
-        val descriptions = item.css("div.descripe").all().map { it.getContentFromHTML() }
-        val sources = item.css("span.mall").all().map { it.getContentFromHTML() }
-        val images = item.css("img", "src").all()
-        val dates = item.css("span.time").all().map { it.getContentFromHTML() }
-        uids.forEachIndexed { index, _ ->
-            val detailUrl = BaseURL.DISCOUNT_HOT_RANK_DETAIL.replace("{uid}", uids[index])
-            val historyUrl = BaseURL.DISCOUNT_HOT_RANK_HISTORY.replace("{uid}", uids[index])
-            val throughUrl = BaseURL.DISCOUNT_HOT_RANK_THROUGH.replace("{uid}", uids[index])
-            val discountHotRankDataEntity = DiscountHotRankDataEntity(
-                    date,
-                    uids[index],
-                    detailUrl,
-                    throughUrl,
-                    ranks[index],
-                    titles[index],
-                    prices[index],
-                    descriptions[index],
-                    sources[index],
-                    images[index],
-                    dates[index]
-            )
-            try {
-                discountHotRankDataMapper.insert(discountHotRankDataEntity)
-            } catch (e: Exception) {
-                discountHotRankDataMapper.update(discountHotRankDataEntity)
-                e.printStackTrace()
-            }
-
-            detailUrls.add(detailUrl  + "?date=${date.replace(" ", "$$$")}")
-            historyUrls.add(historyUrl)
-        }
-        Spider.create(discountHotRankDetailProcessor).thread(3)
-                .addUrl(*detailUrls.toTypedArray())
-                .run()
-        Spider.create(discountHotRankHistoryProcessor).thread(3)
-                .addUrl(*historyUrls.toTypedArray())
-                .run()
     }
 
 }
