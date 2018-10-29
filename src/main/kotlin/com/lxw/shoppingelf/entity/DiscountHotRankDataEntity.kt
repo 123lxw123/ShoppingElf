@@ -15,6 +15,7 @@ data class DiscountHotRankDataEntity(
         val source: String,
         val image: String?,
         val date: String,
+        val isMinPrice: String?,
 
         var category: String? = null,
         var introducer: String? = null,

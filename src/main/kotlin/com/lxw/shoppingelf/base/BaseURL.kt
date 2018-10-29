@@ -1,6 +1,7 @@
 package com.lxw.shoppingelf.base
 
 object BaseURL {
+    const val DISCOUNT_NEW_LIST = "http://zhekou.manmanbuy.com/DefaultSharelist.aspx"// 最新折扣列表
     const val DISCOUNT_HOT_RANK = "http://zhekou.manmanbuy.com/DefaultSharehot.aspx?d={date}%20{hour}:00:00"// 国内折扣热度排行榜
     const val DISCOUNT_HOT_RANK_THROUGH = "http://zhekou.manmanbuy.com/wgoto_{uid}.aspx" // 国内折扣排行榜直达链接
     const val DISCOUNT_HOT_RANK_DETAIL = "http://zhekou.manmanbuy.com/Sharedetailed_{uid}.aspx" // 国内折扣排行榜详情
