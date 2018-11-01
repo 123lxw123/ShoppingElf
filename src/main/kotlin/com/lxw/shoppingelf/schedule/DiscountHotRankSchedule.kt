@@ -28,4 +28,14 @@ class DiscountHotRankSchedule {
                 .addUrl(url)
                 .run()
     }
+
+
+    @Scheduled(cron = "0 */9 * * * ?")
+    fun getDiscountNewRank() {
+        val dateContent = DateUtil.getCurrentDate("yyyy/MM/dd HH:mm:ss")
+        discountHotRankProcessor.setDate(dateContent)
+        Spider.create(discountHotRankProcessor).thread(1)
+                .addUrl(BaseURL.DISCOUNT_NEW_LIST)
+                .run()
+    }
 }

@@ -32,6 +32,7 @@ class DiscountHotRankProcessor : BaseProcessor(){
 
     override fun process(page: Page) {
         val html = page.html
+        val url = page.url.toString()
         val detailUrls = mutableListOf<String>()
         val historyUrls = mutableListOf<String>()
         var title = html.css("div.t").get()
@@ -39,19 +40,22 @@ class DiscountHotRankProcessor : BaseProcessor(){
                 .replace("</span>", ")")
                 .getContentFromHTML()
         try {
-            if (title.subSequence(10, 12) == date.subSequence(11, 13)) {
-                title = title.split("(")[0] + "(" + date.subSequence(0, 10) + " " + title.split("(")[1]
-                val discountHotRankEntity = DiscountHotRankEntity(date, title)
-                try{
-                    discountHotRankMapper.insert(discountHotRankEntity)
-                } catch (e : Exception) {
-                    val oldDiscountHotRankEntity = discountHotRankMapper.selectByTitle(title)
-                    date = oldDiscountHotRankEntity.date
-                    e.printStackTrace()
+            if (url.contains(BaseURL.DISCOUNT_NEW_LIST) || (!url.contains(BaseURL.DISCOUNT_NEW_LIST) && title.subSequence(10, 12) == date.subSequence(11, 13))) {
+                if (!url.contains(BaseURL.DISCOUNT_NEW_LIST)) {
+                    try {
+                        title = title.split("(")[0] + "(" + date.subSequence(0, 10) + " " + title.split("(")[1]
+                        val discountHotRankEntity = DiscountHotRankEntity(date, title)
+                        discountHotRankMapper.insert(discountHotRankEntity)
+                    } catch (e: Exception) {
+                        val oldDiscountHotRankEntity = discountHotRankMapper.selectByTitle(title)
+                        date = oldDiscountHotRankEntity.date
+                        e.printStackTrace()
+                    }
                 }
                 val item = html.css("li.item")
                 val uids = item.css("span.gobuy").regex("tobuy\\('(.*?)'\\)").all()
-                val ranks = item.css("i.ic_top").all().map { it.getContentFromHTML() }
+                val ranks = item.css("i.ic_top").all().map { it?.getContentFromHTML() }
+                val isMinPrices = item.css("div.item_isMinPrice").all().map { it?.getContentFromHTML() }
                 val titles = item.css("h2").css("a").all().filter { !it.contains("highlight") }.map { it.getContentFromHTML() }
                 val prices = item.css("h2").css("a.highlight").all().map { it.getContentFromHTML() }
                 val descriptions = item.css("div.descripe").all().map { it.getContentFromHTML() }
@@ -73,7 +77,8 @@ class DiscountHotRankProcessor : BaseProcessor(){
                             descriptions[index],
                             sources[index],
                             images[index],
-                            dates[index]
+                            dates[index],
+                            isMinPrices[index]
                     )
                     try {
                         discountHotRankDataMapper.insert(discountHotRankDataEntity)

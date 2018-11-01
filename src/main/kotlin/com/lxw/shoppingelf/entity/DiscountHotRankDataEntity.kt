@@ -8,7 +8,7 @@ data class DiscountHotRankDataEntity(
         val uid: String,
         val url: String,
         val throughUrl: String,
-        val rank: String,
+        val rank: String?,
         val title: String,
         val price: String,
         val description: String,
