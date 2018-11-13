@@ -7,13 +7,15 @@ import com.lxw.shoppingelf.entity.DiscountHotRankEntity
 import com.lxw.shoppingelf.mapper.DiscountHotRankDataMapper
 import com.lxw.shoppingelf.mapper.DiscountHotRankMapper
 import com.lxw.shoppingelf.util.getContentFromHTML
+import org.jsoup.helper.StringUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
+import org.springframework.util.StringUtils
 import us.codecraft.webmagic.Page
 import us.codecraft.webmagic.Spider
 
 @Component
-class DiscountHotRankProcessor : BaseProcessor(){
+class DiscountHotRankProcessor : BaseProcessor() {
 
     @Autowired
     private lateinit var discountHotRankMapper: DiscountHotRankMapper
@@ -35,10 +37,15 @@ class DiscountHotRankProcessor : BaseProcessor(){
         val url = page.url.toString()
         val detailUrls = mutableListOf<String>()
         val historyUrls = mutableListOf<String>()
-        var title = html.css("div.t").get()
-                .replace("<span>", "(")
-                .replace("</span>", ")")
-                .getContentFromHTML()
+        var title = ""
+        try {
+            title = html.css("div.t").get()
+                    .replace("<span>", "(")
+                    .replace("</span>", ")")
+                    .getContentFromHTML()
+        } catch (e: Exception) {
+
+        }
         try {
             if (url.contains(BaseURL.DISCOUNT_NEW_LIST) || (!url.contains(BaseURL.DISCOUNT_NEW_LIST) && title.subSequence(10, 12) == date.subSequence(11, 13))) {
                 if (!url.contains(BaseURL.DISCOUNT_NEW_LIST)) {
@@ -55,12 +62,11 @@ class DiscountHotRankProcessor : BaseProcessor(){
                 val item = html.css("li.item")
                 val uids = item.css("span.gobuy").regex("tobuy\\('(.*?)'\\)").all()
                 val ranks = item.css("i.ic_top").all().map { it?.getContentFromHTML() }
-                val isMinPrices = item.css("div.item_isMinPrice").all().map { it?.getContentFromHTML() }
                 val titles = item.css("h2").css("a").all().filter { !it.contains("highlight") }.map { it.getContentFromHTML() }
                 val prices = item.css("h2").css("a.highlight").all().map { it.getContentFromHTML() }
                 val descriptions = item.css("div.descripe").all().map { it.getContentFromHTML() }
                 val sources = item.css("span.mall").all().map { it.getContentFromHTML() }
-                val images = item.css("img", "src").all()
+                val images = item.css("img", "original").all()
                 val dates = item.css("span.time").all().map { it.getContentFromHTML() }
                 uids.forEachIndexed { index, _ ->
                     val detailUrl = BaseURL.DISCOUNT_HOT_RANK_DETAIL.replace("{uid}", uids[index])
@@ -71,14 +77,14 @@ class DiscountHotRankProcessor : BaseProcessor(){
                             uids[index],
                             detailUrl,
                             throughUrl,
-                            ranks[index],
+                            if (ranks.size == uids.size) ranks[index] else "",
                             titles[index],
                             prices[index],
                             descriptions[index],
                             sources[index],
                             images[index],
                             dates[index],
-                            isMinPrices[index]
+                            item.nodes()[index].css("div.item_isMinPrice").get()?.getContentFromHTML()
                     )
                     try {
                         discountHotRankDataMapper.insert(discountHotRankDataEntity)
@@ -87,7 +93,7 @@ class DiscountHotRankProcessor : BaseProcessor(){
                         e.printStackTrace()
                     }
 
-                    detailUrls.add(detailUrl  + "?date=${date.replace(" ", "$$$")}")
+                    detailUrls.add(detailUrl + "?date=${date.replace(" ", "$$$")}")
                     historyUrls.add(historyUrl)
                 }
                 Spider.create(discountHotRankDetailProcessor).thread(3)
