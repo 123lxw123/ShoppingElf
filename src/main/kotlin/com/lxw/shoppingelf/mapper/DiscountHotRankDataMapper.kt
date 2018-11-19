@@ -11,6 +11,9 @@ interface DiscountHotRankDataMapper {
     @Select("SELECT * FROM discount_hot_rank_data WHERE discount_hot_rank_date=#{discountHotRankDate}")
     fun selectByDiscountHotRankDate(discountHotRankDate : String): List<DiscountHotRankDataEntity>?
 
+    @Select("SELECT * FROM discount_hot_rank_data WHERE id>=#{id} AND ID IN (SELECT MAX(ID) FROM TABLE GROUP BY [url] LIMIT #{limit} ORDER BY id DESC")
+    fun selectByIdAndLimit(id : Long, limit: Int): List<DiscountHotRankDataEntity>?
+
     @Options(useGeneratedKeys=true, keyProperty="id")
     @Insert("INSERT INTO discount_hot_rank_data(discount_hot_rank_date, uid, url, through_url, rank, title, price, description, source, image, date, is_min_price, category, introducer, label, share_count, collect_count, like_count) values (#{discountHotRankDate}, #{uid}, #{url}, #{throughUrl}, #{rank}, #{title}, #{price}, #{description}, #{source}, #{image}, #{date}, #{isMinPrice}, #{category}, #{introducer}, #{label}, #{shareCount}, #{collectCount}, #{likeCount})")
     fun insert(instance : DiscountHotRankDataEntity): Int

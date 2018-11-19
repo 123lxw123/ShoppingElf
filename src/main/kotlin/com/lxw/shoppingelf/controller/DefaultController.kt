@@ -69,6 +69,26 @@ class DefaultController {
         return GsonUtil.bean2json(response)
     }
 
+    @GetMapping(value = ["/discountNewRank/list/"])
+    fun getDiscountNewRankList(@RequestParam("id") id: Long, @RequestParam("limit") limit: Int): String {
+        if (id <= 0 || limit <= 0) {
+            val message =  if (id <= 0) " id 不能小于等于 0" else " limit 不能小于等于 0"
+            val response = BaseResponse(null, ParamError.code, ParamError.message + message)
+            return GsonUtil.bean2json(response)
+        }
+        val details = discountHotRankDataMapper.selectByIdAndLimit(id, limit)
+        if (details == null || details.isEmpty()) {
+            val response = BaseResponse(null, NoData.code, NoData.message)
+            return GsonUtil.bean2json(response)
+        }
+        val items = details.map {
+            val history = historyMapper.selectByUrl(it.url)
+            DiscountHotRankItemModel(it, history)
+        }
+        val response = BaseResponse(DiscountHotRankListModel(null, items))
+        return GsonUtil.bean2json(response)
+    }
+
     @GetMapping(value = ["/searchUrl/"])
     fun getSearchUrlResult(@RequestParam("url") url: String?): Callable<String> {
         return Callable {

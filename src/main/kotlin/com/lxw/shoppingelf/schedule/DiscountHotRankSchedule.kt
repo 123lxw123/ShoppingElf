@@ -30,7 +30,7 @@ class DiscountHotRankSchedule {
     }
 
 
-    @Scheduled(cron = "0 */10 * * * ?")
+    @Scheduled(cron = "0 */19 * * * ?")
     fun getDiscountNewRank() {
         val dateContent = DateUtil.getCurrentDate("yyyy/MM/dd HH:mm:ss")
         discountHotRankProcessor.setDate(dateContent)
