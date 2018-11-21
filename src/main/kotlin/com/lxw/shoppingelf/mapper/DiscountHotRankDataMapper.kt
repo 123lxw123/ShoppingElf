@@ -11,7 +11,7 @@ interface DiscountHotRankDataMapper {
     @Select("SELECT * FROM discount_hot_rank_data WHERE discount_hot_rank_date=#{discountHotRankDate}")
     fun selectByDiscountHotRankDate(discountHotRankDate : String): List<DiscountHotRankDataEntity>?
 
-    @Select("SELECT * FROM discount_hot_rank_data WHERE id>=#{id} AND ID IN (SELECT MAX(ID) FROM TABLE GROUP BY [url] LIMIT #{limit} ORDER BY id DESC")
+    @Select("SELECT * FROM discount_hot_rank_data WHERE id IN (id<#{id} AND ID IN (SELECT MAX(id) FROM discount_hot_rank_data WHERE id < #{id} GROUP BY url ORDER BY id DESC) LIMIT #{limit}")
     fun selectByIdAndLimit(id : Long, limit: Int): List<DiscountHotRankDataEntity>?
 
     @Options(useGeneratedKeys=true, keyProperty="id")

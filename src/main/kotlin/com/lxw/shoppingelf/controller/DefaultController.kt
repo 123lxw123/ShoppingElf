@@ -70,13 +70,15 @@ class DefaultController {
     }
 
     @GetMapping(value = ["/discountNewRank/list/"])
-    fun getDiscountNewRankList(@RequestParam("id") id: Long, @RequestParam("limit") limit: Int): String {
-        if (id <= 0 || limit <= 0) {
-            val message =  if (id <= 0) " id 不能小于等于 0" else " limit 不能小于等于 0"
+    fun getDiscountNewRankList(@RequestParam("id") id: Long?, @RequestParam("limit") limit: Int): String {
+        var realId = id
+        if (realId == null) realId = Int.MAX_VALUE.toLong()
+        if (realId <= 0 || limit <= 0) {
+            val message =  if (realId <= 0) " id 不能小于等于 0" else " limit 不能小于等于 0"
             val response = BaseResponse(null, ParamError.code, ParamError.message + message)
             return GsonUtil.bean2json(response)
         }
-        val details = discountHotRankDataMapper.selectByIdAndLimit(id, limit)
+        val details = discountHotRankDataMapper.selectByIdAndLimit(realId, limit)
         if (details == null || details.isEmpty()) {
             val response = BaseResponse(null, NoData.code, NoData.message)
             return GsonUtil.bean2json(response)
